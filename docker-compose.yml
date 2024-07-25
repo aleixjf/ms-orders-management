@@ -1,0 +1,20 @@
+name: isdin
+services:
+  microservice:
+    container_name: microservice
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000" # HTTP port
+      - "50051:50051" # gRPC port
+    volumes:
+      - /app/node_modules
+
+  # mongo:
+  #   container_name: mongo
+  #   image: mongo:4.2.1
+  #   ports:
+  #     - "27017:27017"
+  #   volumes:
+  #     - ./data:/data/db

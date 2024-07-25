@@ -1,0 +1,17 @@
+{
+  "git.ignoreLimitWarning": true,
+  "search.exclude": {
+    "**/node_modules/**": true,
+    "**/dist/**": true
+  },
+  "eslint.validate": ["javascript", "typescript"],
+  "editor.formatOnSave": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "never"
+  },
+  "javascript.preferences.importModuleSpecifier": "non-relative",
+  "javascript.preferences.importModuleSpecifierEnding": "minimal",
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "typescript.preferences.importModuleSpecifierEnding": "minimal",
+}

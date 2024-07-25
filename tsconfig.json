@@ -1,0 +1,43 @@
+{
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "ESNext",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "incremental": true,
+    "skipLibCheck": true,
+    "strictNullChecks": false,
+    "noImplicitAny": false,
+    "strictBindCallApply": false,
+    "forceConsistentCasingInFileNames": false,
+    "noFallthroughCasesInSwitch": false,
+    "resolveJsonModule": true,
+    "paths": {
+      "@apis/*": ["src/services/apis/*"],
+      "@config/*": ["src/config/*"],
+      "@database/*": ["database/*"],
+      "@decorators/*": ["src/decorators/*"],
+      "@enums/*": ["src/enums/*"],
+      "@filters/*": ["src/filters/*"],
+      "@guards/*": ["src/guards/*"],
+      "@interceptors/*": ["src/interceptors/*"],
+      "@middlewares/*": ["src/middlewares/*"],
+      "@modules/*": ["src/modules/*"],
+      "@pipes/*": ["src/pipes/*"],
+      "@services/*": ["src/services/*"],
+      "@test/*": ["test/*"],
+      "@transformers/*": ["src/transformers/*"],
+      "@utils/*": ["src/utils/*"],
+      "@validators/*": ["src/validators/*"]
+    }
+  }
+}

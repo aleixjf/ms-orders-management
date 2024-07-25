@@ -1,0 +1,128 @@
+import "google/protobuf/any.proto";
+
+syntax = "proto3";
+
+package ms_orders_management;
+
+/**************/
+/*** MODELS ***/
+/**************/
+
+// Default models
+message Empty {}
+
+message Bool {
+  bool value = 1;
+}
+
+message String {
+  string value = 1;
+}
+
+message Int {
+  int32 value = 1;
+}
+
+message Float {
+  float value = 1;
+}
+
+message File {
+  bytes content = 1;
+}
+
+message Date {
+  int32 year = 1;
+  int32 month = 2;
+  int32 day = 3;
+  optional int32 hour = 4;
+  optional int32 minute = 5;
+  optional int32 second = 6;
+  optional int32 timezone = 7;
+}
+
+message Time {
+  int32 hour = 1;
+  int32 minute = 2;
+  int32 second = 3;
+  optional int32 timezone = 4;
+}
+
+// Custom models (Objects)
+message GetOrderRequest {
+    string id = 1;
+}
+
+message GetOrdersRequest {
+    optional string ids = 1;
+}
+
+message CreateOrderRequest {
+    string customer_id = 1;
+    string order_date = 2;
+    string delivery_date = 3;
+    repeated Product products = 4;
+}
+
+message UpdateOrderStatusRequest {
+    string id = 1;
+    string status = 2;
+}
+
+message DeleteOrderRequest {
+    string id = 1;
+}
+
+message ConfirmOrderRequest {
+    string id = 1;
+}
+
+message CancelOrderRequest {
+    string id = 1;
+}
+
+
+message Product {
+    string id = 1;
+    int32 quantity = 2;
+    optional string name = 3;
+    optional string description = 4;
+    optional string price = 5;
+}
+
+message Order {
+    string id = 1;
+    string status = 2;
+    string customer_id = 3;
+    string order_date = 4;
+    string delivery_date = 5;
+    float price = 6;
+    repeated Product products = 7;
+}
+
+message Orders {
+    repeated Order items = 1;
+}
+
+message Response {
+  string response = 1;
+  optional string error = 2;
+}
+
+/*******************/
+/*** CONTROLLERS ***/
+/*******************/
+
+service AppController {
+  rpc IsHealthy (Empty) returns (Bool) {}
+}
+
+service OrdersController {
+  rpc GetOrders (Empty) returns (Orders) {}
+  rpc GetOrder (GetOrderRequest) returns (Order) {}
+  rpc CreateOrder (CreateOrderRequest) returns (Order) {}
+  rpc UpdateOrderStatus (UpdateOrderStatusRequest) returns (Order) {}
+  rpc DeleteOrder (DeleteOrderRequest) returns (Empty) {}
+  rpc ConfirmOrder (ConfirmOrderRequest) returns (Empty) {}
+  rpc CancelOrder (CancelOrderRequest) returns (Empty) {}
+}
