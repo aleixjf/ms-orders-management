@@ -3,24 +3,20 @@ import {ConfigModule} from "@nestjs/config";
 import {DataSource, type DataSourceOptions} from "typeorm";
 import {SeederOptions} from "typeorm-extension";
 
-import configuration from "@config/configuration";
-import {validate} from "@config/validation";
-
 import {CustomNamingStrategy} from "@database/naming.strategy";
+
+import configuration from "@infrastructure/configuration/configuration";
+import {validate} from "@infrastructure/configuration/validation";
 
 ConfigModule.forRoot({
     expandVariables: true,
     envFilePath: process.env.NODE_ENV
         ? [
-              `src/config/environments/.env.${process.env.NODE_ENV}`,
+              `environments/.env.${process.env.NODE_ENV}`,
               `.env.${process.env.NODE_ENV}`,
               ".env",
           ]
-        : [
-              "src/config/environments/.env.development",
-              ".env.development",
-              ".env",
-          ],
+        : ["environments/.env.development", ".env.development", ".env"],
     load: [configuration],
     validate,
 });

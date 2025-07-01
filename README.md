@@ -1,115 +1,192 @@
-# Sistema de Gestión de Pedidos (Hexagonal, DDD, Event-Driven)
+# Order Management System - Technical Exercise Implementation
 
-Este proyecto implementa un microservicio de gestión de pedidos para un e-commerce, siguiendo principios de **Domain-Driven Design (DDD)**, **Arquitectura Hexagonal** y comunicación **event-driven**. Incluye lógica de compensación, validación de transiciones de estado y publicación/consumo de eventos de dominio.
+This project implements a complete **Order Management microservice** as part of a technical exercise, demonstrating a **Domain-Driven Design (DDD)** architecture with **Hexagonal Architecture** patterns for an e-commerce company migrating from monolith to microservices.
 
-## Tabla de Contenidos
+The implementation showcases both **legacy layered architecture** and **modern DDD architecture** working in parallel, featuring immutable Value Objects, behavior-rich Aggregates, automatic domain events, and complete infrastructure decoupling through ports and adapters.
 
-- [Descripción](#descripción)
-- [Arquitectura y Diseño](#arquitectura-y-diseño)
-- [Instalación](#instalación)
-- [Ejecución](#ejecución)
+## Table of Contents
+
+- [Business Context](#business-context)
+- [Installation and Execution](#installation-and-execution)
 - [Testing](#testing)
-- [Estructura del Proyecto](#estructura-del-proyecto)
-- [Decisiones de Diseño](#decisiones-de-diseño)
-- [Limitaciones y Mejoras Futuras](#limitaciones-y-mejoras-futuras)
-- [Documentación Adicional](#documentación-adicional)
+- [Project Structure](#project-structure)
+- [Design Decisions and Trade-offs](#design-decisions-and-trade-offs)
+- [Future Improvements](#future-improvements)
+- [Additional Documentation](#additional-documentation)
 
-## Descripción
+## Business Context
 
-Microservicio para la gestión de pedidos, soportando:
-- Estados: Pending, Confirmed, Shipped, Delivered, Cancelled
-- Validación de transiciones de estado
-- Cálculo de total de pedido
-- Lógica de compensación (stock, cancelaciones)
-- Comunicación por eventos (Kafka simulado)
-- Testing unitario y end-to-end
+An e-commerce company with the following characteristics:
 
-## Arquitectura y Diseño
+- **Physical Products**: Limited inventory with stock management
+- **Order Lifecycle**: Pending → Confirmed → Shipped → Delivered
+- **Inventory Consistency**: Critical stock reservation and compensation
+- **External Payments**: Integration with external payment providers
+- **Customer Notifications**: Event-driven order status updates
 
-- **Hexagonal Architecture**: Separación clara entre dominio, infraestructura y aplicación.
-- **DDD**: Agregado principal `Order`, entidades y eventos de dominio.
-- **Event-Driven**: Publicación y consumo de eventos para integración con otros servicios (stock, pagos).
-- **NestJS + TypeORM**: Framework y ORM para Node.js/TypeScript.
-- **Testing**: Jest para unitarios y e2e.
+### Business Features
 
-Más detalles en [`docs/architecture.md`](docs/architecture.md).
+- **Order states**: Pending, Confirmed, Shipped, Delivered, Cancelled
+- **State transition validation** with business rules encapsulated in the domain
+- **Automatic total calculation** through domain methods
+- **Compensation logic** for stock and cancellations through events
+- **Domain events** for decoupled communication and event-driven architecture
+- **Immutable Value Objects** with construction validation
 
-## Instalación
+### Technical Implementation
+
+- **Framework**: NestJS with TypeScript
+- **Persistence**: TypeORM with PostgreSQL
+- **Messaging**: Kafka (simulated in tests)
+- **Validation & serialization**: class-validator and class-transformer with well-defined DTOs and entities
+  - **Value Objects** with private constructors and factory methods (which include additional validation) for immutability
+- **Testing**: Jest for unit and complete e2e tests
+
+### Key Features
+
+- **Aggregate Roots** with encapsulated business logic and automatic domain events
+- **Ports and Adapters** for complete infrastructure decoupling
+- **Event Publisher** completely decoupled for domain event publishing to Kafka, RabbitMQ, or other messaging systems
+
+## Architecture and Design
+
+More details in [`docs/architecture.md`](docs/architecture.md).
+
+### Implemented DDD Architecture
+
+- **Domain Layer**: Aggregate Roots, Value Objects, Domain Events, Repository Interfaces
+- **Application Layer**: Application Services, DTOs, Commands and Use Cases
+- **Infrastructure Layer**: Repository Implementations, Event Publishers, Kafka Adapters
+- **Presentation Layer**: HTTP Controllers, REST API endpoints
+
+### Applied Patterns and Principles
+
+- **Hexagonal Architecture**: Ports and adapters for infrastructure decoupling
+- **DDD Tactical Patterns**: Aggregates, Value Objects, Domain Events, Repository Pattern
+- **Event-Driven Architecture**: Domain events for asynchronous communication
+- **CQRS Ready**: Clear separation between commands and queries
+- **Clean Architecture**: Dependencies pointing towards the domain
+
+## Installation and Execution
+
+### Prerequisites
+
+- Node.js 22+
+- npm 11+
+- Docker (for local development)
+
+### Installation
 
 ```bash
-pnpm install
-# o npm install
+# Clone the repository
+git clone <repository-url>
+cd ms-orders-management
+
+# Install dependencies
+npm install
+
+# Setup environment (copy and configure)
+cp .env.example .env
 ```
 
-## Ejecución
+### Running the Application
 
 ```bash
-# Desarrollo
-pnpm run start:dev
+# Use Docker Compose (recommended for development)
+npm run docker:dev
 
-# Producción
-pnpm run start:prod
+# Development mode
+npm run start:dev
+
+# Production mode
+npm run start:prod
 ```
 
 ## Testing
 
 ```bash
 # Unit tests
-pnpm run test
+npm run test
 
 # End-to-end tests
-pnpm run test:e2e
+npm run test:e2e
 
-# Cobertura
-pnpm run test:cov
+# Coverage
+npm run test:coverage
 ```
 
-## Estructura del Proyecto
+## Project Structure
 
-```
+Complete structure documentation in [`docs/scaffolding.md`](docs/scaffolding.md).
+
+```text
 /src
-  /modules
+  /domain
     /orders
-      /dtos
-      /entities
-      orders.controller.ts
-      orders.service.ts
-      orders.events.ts
-      ...
-  ...
-/docs
-  architecture.md
-  bounded-contexts.md
-  adr/
-    adr-001.md
-    adr-002.md
-    ...
-README.md
+      /entities           # Order (Aggregate Root), Product (Entity)
+      /value-objects      # OrderId, CustomerId, ProductId, etc.
+      /events             # OrderCreated, OrderConfirmed, etc.
+      /repositories       # IOrderRepository (port)
+      /services           # OrderDomainService
+  /application
+    /orders
+      /dto                # DTOs for data transfer
+      /services           # Application services
+      /commands           # Application commands
+      /controllers        # HTTP controllers
+  /infrastructure
+    /persistence/orders   # OrderTypeORMRepository (adapter)
+    /messaging
+      /kafka              # KafkaModule, KafkaEventAdapter
+      /domain             # OrdersKafkaPublisher
+  /modules                # NestJS module configuration
 ```
 
-- **/src/modules/orders**: Lógica de dominio y aplicación de pedidos.
-- **/docs**: Documentación técnica y de negocio.
-- **/docs/adr**: Architecture Decision Records.
+## Design Decisions and Trade-offs
 
-## Decisiones de Diseño
+### Architectural Decision Records
 
-- DDD y Hexagonal para desacoplar dominio e infraestructura.
-- Comunicación asíncrona por eventos para resiliencia y escalabilidad.
-- Lógica de compensación para mantener consistencia ante fallos.
-- Validación estricta de datos y transiciones de estado.
+The project includes detailed ADRs documenting key architectural decisions:
 
-Ver [`docs/adr/`](docs/adr/) para detalles.
+- [ADR-001: DDD Architecture](docs/adr/adr-001-ddd-architecture.md)
+- [ADR-002: Value Objects with Private Constructors](docs/adr/adr-002-value-objects-private-constructors.md)
+- [ADR-003: Data Validation with Class-Transformer and Class-Validator](docs/adr/adr-003-data-validation.md)
+- [ADR-004: Decoupled Event Publisher](docs/adr/adr-004-decoupled-event-publisher.md)
+- [ADR-005: TypeORM for Database Infrastructure](docs/adr/adr-005-typeorm-database-infrastructure.md)
 
-## Limitaciones y Mejoras Futuras
 
-- La mensajería está simulada (no hay Kafka real).
-- No se implementa autenticación/autorización.
-- Faltan algunos tests e2e y de integración.
-- Mejorar la gestión de errores y timeouts en eventos.
+### Known Limitations and Future Improvements
 
-## Documentación Adicional
 
-- [Arquitectura y Modelo de Dominio](docs/architecture.md)
-- [Bounded Contexts y Context Map](docs/bounded-contexts.md)
-- [ADRs - Decisiones Arquitectónicas](docs/adr/)
-- [Guía de desarrollo y convenciones](docs/contributing.md)
+### Simulated External Services
+
+- **Inventory Management**: Simulated via Kafka events (stock.reserved, stock.rejected)
+- **Payment Processing**: Interface ready, simulated responses
+- **Customer Notifications**: Event-driven hooks implemented, handlers simulated
+
+## Future Improvements
+
+- **Performance Optimization**: Production-ready configuration and monitoring
+- **Event Sourcing**: Complete audit trail for aggregate changes
+- **CQRS Implementation**: Separate read/write models for scalability
+- **API Documentation**: OpenAPI/Swagger for both legacy and DDD endpoints
+- **Circuit Breakers**: Resilience patterns for external service integration
+
+### Production Considerations
+
+- **Monitoring**: Domain event metrics and business KPIs
+- **Security**: Authentication and authorization (assumed pre-validated in headers)
+
+## Time Investment
+
+- **Design Phase**: ~2 hours (bounded contexts, aggregate design, architecture planning)
+- **Implementation Phase**: ~30 hours (domain layer, application layer, infrastructure adapters)
+- **Testing & Documentation**: ~8 hours (unit tests, integration tests, documentation)
+- **Total**: ~40 hours of focused development
+
+## Additional Documentation
+
+- [**Architecture and Domain Model**](docs/architecture.md) - Technical design and applied patterns
+- [**Bounded Contexts and Context Map**](docs/bounded-contexts.md) - Domain separation and integration
+- [**ADRs - Architectural Decisions**](docs/adr/) - Documented technical decisions and trade-offs
+- [**Project Structure**](docs/scaffolding.md) - Detailed folder structure and organization

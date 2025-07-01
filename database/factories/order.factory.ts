@@ -3,7 +3,7 @@ import {setSeederFactory} from "typeorm-extension";
 
 import {OrderStatus} from "@enums/order-status.enum";
 
-import {Order} from "@modules/orders/entities/order.entity";
+import {Order} from "@infrastructure/persistence/orders/entities/order.typeorm.entity";
 
 export default setSeederFactory(Order, () => {
     return new Order({

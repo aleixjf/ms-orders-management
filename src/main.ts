@@ -1,6 +1,7 @@
 import * as fs from "fs";
 
 import {HttpModule, HttpService} from "@nestjs/axios";
+import {Logger} from "@nestjs/common";
 import {ConfigService} from "@nestjs/config";
 import {NestFactory} from "@nestjs/core";
 import {MicroserviceOptions, Transport} from "@nestjs/microservices";
@@ -10,22 +11,15 @@ import {ReflectionService} from "@grpc/reflection";
 import compression from "compression";
 import helmet from "helmet";
 
-import {ExtendedLogger} from "@config/logger/extended";
-
-import {AppModule} from "@modules/app/app.module";
-
 import {AxiosInterceptor} from "@interceptors/axios.interceptor";
+
+import {AppModule} from "src/app.module";
 
 async function bootstrap() {
     // console.debug("Process ENV", process.env);
-    const app = await NestFactory.create(AppModule, {
-        // ? We are using the ExtendedLogger to also preserve NestJS functionality (including the original console logger, preserving context when passing arguments to Logger methods, etc.)
-        logger: new ExtendedLogger(undefined, {
-            console: "Nest",
-            stackLinesInConsole: 2,
-        }),
-    });
+    const app = await NestFactory.create(AppModule);
     const configuration = app.get(ConfigService);
+    const logger = app.get(Logger);
 
     // Check if certificates are provided
     let certificates: {
@@ -136,20 +130,30 @@ async function bootstrap() {
         transport: Transport.KAFKA,
         options: {
             client: {
-                brokers: [configuration.get<string>("kafka.broker")],
+                brokers: configuration.get<string[]>("kafka.brokers") || [
+                    "localhost:9092",
+                ],
             },
             consumer: {
-                groupId: configuration.get<string>("kafka.groupId"),
+                groupId:
+                    configuration.get<string>("kafka.groupId") ||
+                    "ms-orders-management",
                 retry: {
-                    retries: 5,
+                    retries: 0, // ? Disable automatic retries, our custom KafkaExceptionFilter will handle retries
                     initialRetryTime: 300,
                     maxRetryTime: 1000,
-                    factor: 2,
-                    multiplier: 2,
-                    restartOnFailure: async (err) => {
-                        console.error(err);
-                        // TODO: Notify the team about the error and the Kafka consumer restart
-                        return true; // Restart (or not) the consumer
+                    factor: 1,
+                    multiplier: 1,
+                    restartOnFailure: async (error) => {
+                        // ? With our custom KafkaExceptionFilter, we already handle consumer errors, which means we should never reach this code in theory.
+                        logger.error(
+                            "Critical error in Kafka consumer, preventing restart...",
+                            {
+                                context: "KafkaConsumer",
+                                error,
+                            }
+                        );
+                        return false;
                     },
                 },
                 allowAutoTopicCreation: true,

@@ -4,15 +4,15 @@ import {compilerOptions} from "./tsconfig.json";
 
 export default {
     moduleFileExtensions: ["js", "json", "ts"],
-    rootDir: "src",
+    rootDir: ".",
     coverageDirectory: "../coverage",
     testEnvironment: "node",
-    testRegex: ".*\\.spec\\.ts$",
+    testRegex: "^(?!.*\\.e2e\\.spec\\.ts$).*\\.spec\\.ts$",
     transform: {
         "^.+\\.(t|j)s$": "ts-jest",
     },
-    collectCoverageFrom: ["**/*.(t|j)s"],
+    collectCoverageFrom: ["**/*.(t|j)s", "!**/*.e2e.spec.ts"],
     moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, {
-        prefix: "<rootDir>/../",
+        prefix: "<rootDir>/",
     }),
 };

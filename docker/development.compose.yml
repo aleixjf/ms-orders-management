@@ -10,11 +10,11 @@ services:
     container_name: microservice
     command: ["sh", "-c", "npm run start:dev"] # ? This will run the start:dev script defined in package.json, which watches for file changes and restarts the server automatically
     env_file:
-      - src/config/environments/.env.development
+      - environments/.env.development
     volumes:
       - .:/app # ? This will mount the current directory into the container. This allows for hot-reloading
     environment:
-      - KAFKA_HOST=kafka
+      - KAFKA_BROKERS=kafka:9092
       - RDB_HOST=rdb
     networks:
       - isdin-network
@@ -62,4 +62,16 @@ services:
           - kafka
     depends_on:
       - zookeeper
+
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui
+    ports:
+      - "8080:8080"
+    environment:
+      DYNAMIC_CONFIG_ENABLED: 'true'
+    networks:
+      isdin-network:
+        aliases:
+          - kafka-ui
 

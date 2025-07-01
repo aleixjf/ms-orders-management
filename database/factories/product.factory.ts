@@ -1,7 +1,7 @@
 import {faker} from "@faker-js/faker";
 import {setSeederFactory} from "typeorm-extension";
 
-import {Product} from "@modules/orders/entities/product.entity";
+import {Product} from "@infrastructure/persistence/orders/entities/product.typeorm.entity";
 
 export default setSeederFactory(
     Product,
