@@ -79,7 +79,7 @@ More details in [`docs/architecture.md`](docs/architecture.md).
 
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/aleixjf/ms-orders-management.git
 cd ms-orders-management
 
 # Install dependencies
