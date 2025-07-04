@@ -23,21 +23,25 @@
     "resolveJsonModule": true,
     "paths": {
       "@apis/*": ["src/services/apis/*"],
-      "@config/*": ["src/config/*"],
+      "@application/*": ["src/application/*"],
+      "@config/*": ["config/*"],
       "@database/*": ["database/*"],
-      "@decorators/*": ["src/decorators/*"],
-      "@enums/*": ["src/enums/*"],
-      "@filters/*": ["src/filters/*"],
-      "@guards/*": ["src/guards/*"],
-      "@interceptors/*": ["src/interceptors/*"],
-      "@middlewares/*": ["src/middlewares/*"],
+      "@decorators/*": ["src/shared/decorators/*"],
+      "@domain/*": ["src/domain/*"],
+      "@enums/*": ["src/shared/enums/*"],
+      "@filters/*": ["src/shared/filters/*"],
+      "@guards/*": ["src/shared/guards/*"],
+      "@infrastructure/*": ["src/infrastructure/*"],
+      "@interceptors/*": ["src/shared/interceptors/*"],
+      "@middlewares/*": ["src/shared/middlewares/*"],
       "@modules/*": ["src/modules/*"],
-      "@pipes/*": ["src/pipes/*"],
+      "@pipes/*": ["src/shared/pipes/*"],
       "@services/*": ["src/services/*"],
+      "@src/*": ["src/*"],
       "@test/*": ["test/*"],
-      "@transformers/*": ["src/transformers/*"],
-      "@utils/*": ["src/utils/*"],
-      "@validators/*": ["src/validators/*"]
+      "@transformers/*": ["src/shared/transformers/*"],
+      "@utils/*": ["src/shared/utils/*"],
+      "@validators/*": ["src/shared/validators/*"]
     }
   }
 }

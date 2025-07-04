@@ -8,7 +8,7 @@ services:
   microservice:
     container_name: microservice
     env_file:
-      - src/config/environments/.env.production
+      - environments/.env.production
     environment:
       - RDB_HOST=rdb
       - KAFKA_HOST=kafka
