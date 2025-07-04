@@ -1,0 +1,30 @@
+# More info about supported properties:
+# https://github.com/editorconfig/editorconfig/wiki/EditorConfig-Properties
+
+[*]
+# This settings will affect all project files
+indent_style = space
+indent_size = 4 # Same as tab_width
+trim_trailing_whitespace = true
+end_of_line = lf
+insert_final_newline = true
+charset = utf-8
+
+[*.{html,htm}]
+# Language specific settings
+
+[*.{css,scss,sass,less}]
+# Language specific settings
+
+[*.{js,jsx,ts,tsx,vue}]
+# Language specific settings
+
+[*.{json,yml,yaml}]
+# Language specific settings
+indent_size = 2
+
+[*.{md,markdown}]
+# Language specific settings
+
+[*.{sh,bat}]
+# Language specific settings
